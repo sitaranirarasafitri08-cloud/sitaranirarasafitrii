@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MathQuest - Kuis Matematika Pintar</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Fredoka & Plus Jakarta Sans -->
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Canvas Confetti Library -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            fredoka: ['Fredoka', 'sans-serif'],
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
+          },
+          colors: {
+            theme: {
+              50: '#F0F7FF',
+              100: '#E0EFFE',
+              200: '#BAE0FD',
+              300: '#7CD0FC',
+              400: '#38BDF8',
+              500: '#0EA5E9',
+              600: '#0284C7',
+              700: '#0369A1',
+              800: '#075985',
+              900: '#0C4A6E',
+            }
+          },
+          keyframes: {
+            float: {
+              '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
+              '50%': { transform: 'translateY(-8px) rotate(2deg)' }
+            },
+            blink: {
+              '0%, 90%, 100%': { transform: 'scaleY(1)' },
+              '95%': { transform: 'scaleY(0.1)' }
+            },
+            joy: {
+              '0%, 100%': { transform: 'translateY(0) scale(1)' },
+              '50%': { transform: 'translateY(-12px) scale(1.05)' }
+            }
+          },
+          animation: {
+            'mascot-float': 'float 4s ease-in-out infinite',
+            'mascot-joy': 'joy 0.5s ease-in-out 3',
+            'mascot-blink': 'blink 4s infinite'
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: linear-gradient(135deg, #0EA5E9 0%, #0284C7 50%, #0369A1 100%);
+      background-attachment: fixed;
+    }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(16px);
+      border: 2px solid rgba(255, 255, 255, 0.8);
+      box-shadow: 0 20px 40px rgba(7, 89, 133, 0.25);
+    }
+    .btn-blue {
+      background: linear-gradient(135deg, #0EA5E9 0%, #0284C7 100%);
+      transition: all 0.2s ease-in-out;
+    }
+    .btn-blue:hover {
+      background: linear-gradient(135deg, #38BDF8 0%, #0EA5E9 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(14, 165, 233, 0.4);
+    }
+    .btn-blue:active {
+      transform: translateY(0);
+    }
+    .option-btn {
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .option-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      border-color: #0EA5E9;
+      background-color: #F0F7FF;
+      box-shadow: 0 6px 15px rgba(14, 165, 233, 0.15);
+    }
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #E0EFFE;
+      border-radius: 8px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #38BDF8;
+      border-radius: 8px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #0EA5E9;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-3 sm:p-6 text-slate-800">
+
+  <!-- MAIN CONTAINER CARD -->
+  <div class="w-full max-w-3xl glass-card rounded-3xl p-4 sm:p-8 relative overflow-hidden transition-all duration-300">
+    
+    <!-- Sound Toggle Floating Button -->
+    <button id="soundToggleBtn" onclick="toggleSound()" class="absolute top-4 right-4 bg-theme-50 hover:bg-theme-100 text-theme-700 w-10 h-10 rounded-full flex items-center justify-center shadow-md transition-all z-20 border border-theme-200" title="Suara On/Off">
+      <i id="soundIcon" class="fas fa-volume-up text-lg text-theme-600"></i>
+    </button>
+
+    <!-- ==================== 1. MENU UTAMA (HOME) ==================== -->
+    <div id="screenHome" class="space-y-6 text-center py-2">
+      
+      <!-- MASCOT ANIMATED SVG (HOME) -->
+      <div class="w-28 h-28 sm:w-36 sm:h-36 mx-auto relative animate-mascot-float">
+        <svg id="mascotHomeSvg" viewBox="0 0 200 200" class="w-full h-full drop-shadow-lg">
+          <!-- Mascot Body (Blue Wise Owl / Wizard) -->
+          <circle cx="100" cy="105" r="70" fill="#0EA5E9"/>
+          <circle cx="100" cy="115" r="50" fill="#E0EFFE"/>
+          
+          <!-- Graduation / Math Cap -->
+          <polygon points="100,20 160,40 100,60 40,40" fill="#0C4A6E"/>
+          <rect x="85" y="45" width="30" height="15" fill="#075985" rx="3"/>
+          <line x1="160" y1="40" x2="165" y2="70" stroke="#F59E0B" stroke-width="4" stroke-linecap="round"/>
+          <circle cx="165" cy="73" r="5" fill="#F59E0B"/>
+
+          <!-- Glasses -->
+          <circle cx="75" cy="90" r="20" fill="none" stroke="#0C4A6E" stroke-width="4"/>
+          <circle cx="125" cy="90" r="20" fill="none" stroke="#0C4A6E" stroke-width="4"/>
+          <line x1="95" y1="90" x2="105" y2="90" stroke="#0C4A6E" stroke-width="4"/>
+
+          <!-- Animated Eyes -->
+          <g class="animate-mascot-blink">
+            <circle cx="75" cy="90" r="8" fill="#0C4A6E"/>
+            <circle cx="125" cy="90" r="8" fill="#0C4A6E"/>
+            <circle cx="78" cy="87" r="3" fill="#FFFFFF"/>
+            <circle cx="128" cy="87" r="3" fill="#FFFFFF"/>
+          </g>
+
+          <!-- Cute Beak -->
+          <polygon points="100,98 90,110 110,110" fill="#F59E0B"/>
+
+          <!-- Wings Holding Math Pencil -->
+          <ellipse cx="40" cy="120" rx="12" ry="25" fill="#0284C7" transform="rotate(20 40 120)"/>
+          <ellipse cx="160" cy="120" rx="12" ry="25" fill="#0284C7" transform="rotate(-20 160 120)"/>
+          
+          <!-- Little Wand / Pencil -->
+          <rect x="155" y="90" width="8" height="45" fill="#F59E0B" rx="2" transform="rotate(25 155 90)"/>
+          <polygon points="172,130 178,138 168,137" fill="#0C4A6E"/>
+        </svg>
+      </div>
+
+      <div class="space-y-2">
+        <div class="inline-flex items-center gap-2 bg-theme-100 text-theme-800 font-bold px-4 py-1.5 rounded-full text-xs sm:text-sm shadow-sm border border-theme-200">
+          <i class="fas fa-graduation-cap text-theme-600"></i> Kuis Matematika Seru & Interaktif
+        </div>
+        <h1 class="text-3xl sm:text-5xl font-extrabold text-slate-900 font-fredoka tracking-tight">
+          Math<span class="text-theme-500">Quest</span>
+        </h1>
+        <p class="text-slate-600 text-xs sm:text-sm max-w-md mx-auto">
+          Asah kemampuan matematikamu bersama Prof. Owly! Selesaikan <span class="font-bold text-theme-600">15 soal</span> acak dengan waktu <span class="font-bold text-theme-600">2 menit per-soal</span>.
+        </p>
+      </div>
+
+      <!-- Mode Selector -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-xl mx-auto pt-2">
+        <!-- Card Individu -->
+        <div onclick="selectMode('individu')" id="modeIndividuCard" class="cursor-pointer border-2 border-theme-200 hover:border-theme-500 rounded-2xl p-4 bg-white text-left transition-all shadow-sm hover:shadow-md group relative">
+          <div class="w-10 h-10 rounded-xl bg-theme-100 text-theme-600 flex items-center justify-center mb-2 text-xl group-hover:scale-110 transition-transform">
+            <i class="fas fa-user"></i>
+          </div>
+          <h3 class="text-base font-bold font-fredoka text-slate-800">Mode Individu</h3>
+          <p class="text-xs text-slate-500 mt-0.5">Main solo untuk menguji kecepatan & ketepatan diri sendiri.</p>
+          <div class="absolute top-3 right-3 text-theme-500 opacity-0 group-hover:opacity-100 transition-opacity">
+            <i class="fas fa-check-circle text-lg"></i>
+          </div>
+        </div>
+
+        <!-- Card Kelompok -->
+        <div onclick="selectMode('kelompok')" id="modeKelompokCard" class="cursor-pointer border-2 border-theme-200 hover:border-theme-500 rounded-2xl p-4 bg-white text-left transition-all shadow-sm hover:shadow-md group relative">
+          <div class="w-10 h-10 rounded-xl bg-cyan-100 text-cyan-600 flex items-center justify-center mb-2 text-xl group-hover:scale-110 transition-transform">
+            <i class="fas fa-users"></i>
+          </div>
+          <h3 class="text-base font-bold font-fredoka text-slate-800">Mode Kelompok / Tim</h3>
+          <p class="text-xs text-slate-500 mt-0.5">Kompetisi antar tim/kelompok secara bergiliran untuk skor tertinggi.</p>
+          <div class="absolute top-3 right-3 text-cyan-500 opacity-0 group-hover:opacity-100 transition-opacity">
+            <i class="fas fa-check-circle text-lg"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Setup Form -->
+      <div id="setupForm" class="hidden max-w-md mx-auto bg-theme-50/80 p-4 sm:p-5 rounded-2xl border border-theme-200 text-left space-y-4">
+        <h4 id="setupTitle" class="font-bold text-theme-900 text-xs sm:text-sm flex items-center gap-2">
+          <i class="fas fa-user-gear text-theme-600"></i> Pengaturan Pemain
+        </h4>
+        
+        <!-- Input Nama Pemain Solo -->
+        <div id="inputIndividuWrapper">
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Nama Pemain:</label>
+          <input type="text" id="playerName" placeholder="Masukkan nama kamu..." class="w-full px-3.5 py-2 rounded-xl border border-theme-200 focus:outline-none focus:ring-2 focus:ring-theme-500 text-sm bg-white">
+        </div>
+
+        <!-- Input Nama Kelompok -->
+        <div id="inputKelompokWrapper" class="hidden space-y-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Jumlah Kelompok:</label>
+            <select id="teamCountSelect" onchange="updateTeamInputs()" class="w-full px-3.5 py-2 rounded-xl border border-theme-200 focus:outline-none focus:ring-2 focus:ring-theme-500 text-sm bg-white">
+              <option value="2">2 Kelompok</option>
+              <option value="3">3 Kelompok</option>
+              <option value="4">4 Kelompok</option>
+            </select>
+          </div>
+          <div id="teamNamesContainer" class="space-y-2">
+            <!-- Dynamic team inputs -->
+          </div>
+        </div>
+
+        <button onclick="startGame()" class="w-full py-3 px-6 btn-blue text-white font-bold rounded-xl shadow-md font-fredoka flex items-center justify-center gap-2 text-base">
+          <i class="fas fa-play text-sm"></i> Mulai Kuis Sekarang
+        </button>
+      </div>
+
+      <!-- Info Badges -->
+      <div class="flex justify-center gap-4 text-xs text-slate-600 pt-1">
+        <span class="flex items-center gap-1.5"><i class="fas fa-list-check text-theme-500"></i> 15 Soal</span>
+        <span class="flex items-center gap-1.5"><i class="fas fa-stopwatch text-amber-500"></i> 2 Menit / Soal</span>
+        <span class="flex items-center gap-1.5"><i class="fas fa-award text-emerald-500"></i> Pembahasan Review</span>
+      </div>
+    </div>
+
+
+    <!-- ==================== 2. LAYAR GAME (GAMEPLAY) ==================== -->
+    <div id="screenGame" class="hidden space-y-4">
+      
+      <!-- Top Status Bar -->
+      <div class="bg-white p-3.5 sm:p-4 rounded-2xl shadow-sm border border-theme-100 space-y-2.5">
+        <!-- Team Turn Info -->
+        <div id="teamTurnBadge" class="hidden bg-cyan-100 border border-cyan-200 text-cyan-800 px-3 py-1 rounded-full text-xs font-bold text-center animate-pulse">
+          <i class="fas fa-flag mr-1"></i> Giliran Bermain: <span id="currentTeamName" class="underline">Tim A</span>
+        </div>
+
+        <div class="flex items-center justify-between gap-2">
+          <!-- Question Counter -->
+          <div class="flex items-center gap-2">
+            <span class="w-9 h-9 rounded-xl bg-theme-100 text-theme-600 flex items-center justify-center font-bold text-sm">
+              <i class="fas fa-hashtag"></i>
+            </span>
+            <div>
+              <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Nomor Soal</p>
+              <p class="text-sm sm:text-base font-extrabold text-slate-800 font-fredoka"><span id="currentQuestionNum">1</span> / 15</p>
+            </div>
+          </div>
+
+          <!-- Per-Question Timer (2 Minutes Reset Each Question) -->
+          <div class="flex items-center gap-2 bg-amber-50 px-3.5 py-1.5 rounded-xl border border-amber-200">
+            <i class="fas fa-clock text-amber-500 text-lg animate-bounce"></i>
+            <div>
+              <p class="text-[10px] text-amber-600 font-bold uppercase tracking-wider">Waktu Soal Ini</p>
+              <p id="timerText" class="text-sm sm:text-base font-extrabold text-amber-700 font-fredoka">02:00</p>
+            </div>
+          </div>
+
+          <!-- Score -->
+          <div class="flex items-center gap-2">
+            <div>
+              <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider text-right">Skor Total</p>
+              <p id="scoreText" class="text-sm sm:text-base font-extrabold text-emerald-600 font-fredoka text-right">0</p>
+            </div>
+            <span class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold text-sm">
+              <i class="fas fa-star"></i>
+            </span>
+          </div>
+        </div>
+
+        <!-- Timer Bar -->
+        <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+          <div id="timerBar" class="bg-theme-500 h-full w-full transition-all duration-1000 ease-linear"></div>
+        </div>
+      </div>
+
+      <!-- Main Question & Mascot Area -->
+      <div class="bg-white rounded-2xl p-5 sm:p-7 shadow-sm border border-theme-100 text-center space-y-4 relative">
+        
+        <!-- MASCOT DYNAMIC EXPRESSION (GAMEPLAY) -->
+        <div class="flex justify-center items-center gap-3">
+          <div id="gameMascotContainer" class="w-20 h-20 sm:w-24 sm:h-24 transition-all duration-300">
+            <!-- Dynamic SVG render by JS -->
+          </div>
+          <div id="mascotBubble" class="bg-theme-50 border border-theme-200 text-theme-800 text-xs sm:text-sm font-semibold px-4 py-2 rounded-2xl rounded-bl-none shadow-sm max-w-[220px] text-left animate-fade-in">
+            Ayo hitung dengan cermat ya!
+          </div>
+        </div>
+
+        <!-- Question Title -->
+        <div class="py-2">
+          <span class="text-[11px] font-bold uppercase tracking-wider text-theme-600 bg-theme-50 px-3 py-1 rounded-full border border-theme-100">
+            Pilih Jawaban Yang Benar
+          </span>
+          <h2 id="questionMath" class="text-3xl sm:text-4xl font-extrabold text-slate-800 font-fredoka tracking-wide mt-3">
+            12 + 15 = ?
+          </h2>
+        </div>
+
+        <!-- Options Grid -->
+        <div id="optionsGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <!-- Options generated dynamically -->
+        </div>
+      </div>
+
+      <!-- Footer Buttons -->
+      <div class="flex justify-between items-center px-2">
+        <button onclick="confirmQuit()" class="text-xs text-slate-500 hover:text-red-500 transition-colors font-medium flex items-center gap-1.5">
+          <i class="fas fa-door-open"></i> Keluar Kuis
+        </button>
+        <span class="text-xs text-theme-700 font-semibold bg-white px-3 py-1 rounded-full border border-theme-100">
+          <i class="fas fa-info-circle text-theme-500 mr-1"></i> Waktu di-reset tiap soal
+        </span>
+      </div>
+    </div>
+
+
+    <!-- ==================== 3. LAYAR HASIL (RESULT SCREEN) ==================== -->
+    <div id="screenResult" class="hidden space-y-5 text-center py-2">
+      
+      <!-- Mascot Result Celebration -->
+      <div class="w-28 h-28 mx-auto relative animate-mascot-joy">
+        <svg viewBox="0 0 200 200" class="w-full h-full drop-shadow-md">
+          <circle cx="100" cy="105" r="70" fill="#0EA5E9"/>
+          <circle cx="100" cy="115" r="50" fill="#E0EFFE"/>
+          <!-- Cap -->
+          <polygon points="100,20 160,40 100,60 40,40" fill="#0C4A6E"/>
+          <!-- Happy Crown/Trophy -->
+          <path d="M 60,90 Q 75,70 90,90 Q 100,70 110,90 Q 125,70 140,90 L 130,110 L 70,110 Z" fill="#F59E0B"/>
+          <circle cx="100" cy="95" r="12" fill="#0C4A6E"/>
+          <polygon points="100,98 90,110 110,110" fill="#F59E0B"/>
+        </svg>
+      </div>
+
+      <div class="space-y-1">
+        <h2 id="resultTitle" class="text-3xl sm:text-4xl font-extrabold text-slate-800 font-fredoka">
+          Luar Biasa!
+        </h2>
+        <p id="resultSubtitle" class="text-xs sm:text-sm text-slate-600">
+          Kamu telah menyelesaikan seluruh 15 soal matematika ini.
+        </p>
+      </div>
+
+      <!-- Stats Grid -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+        <div class="bg-white p-3 rounded-2xl border border-theme-100 shadow-sm">
+          <p class="text-[10px] text-slate-400 font-bold uppercase">Total Skor</p>
+          <p id="resTotalScore" class="text-2xl font-extrabold text-theme-600 font-fredoka">150</p>
+        </div>
+        <div class="bg-white p-3 rounded-2xl border border-theme-100 shadow-sm">
+          <p class="text-[10px] text-slate-400 font-bold uppercase">Benar / Salah</p>
+          <p class="text-base font-bold text-slate-700 font-fredoka mt-1">
+            <span class="text-emerald-500" id="resCorrect">12</span> / <span class="text-red-500" id="resWrong">3</span>
+          </p>
+        </div>
+        <div class="bg-white p-3 rounded-2xl border border-theme-100 shadow-sm">
+          <p class="text-[10px] text-slate-400 font-bold uppercase">Rata-rata Waktu</p>
+          <p id="resAvgTime" class="text-base font-bold text-amber-600 font-fredoka mt-1">18 dtk/soal</p>
+        </div>
+        <div class="bg-white p-3 rounded-2xl border border-theme-100 shadow-sm">
+          <p class="text-[10px] text-slate-400 font-bold uppercase">Akurasi</p>
+          <p id="resAccuracy" class="text-base font-bold text-blue-600 font-fredoka mt-1">80%</p>
+        </div>
+      </div>
+
+      <!-- Group Leaderboard Table (Group Mode Only) -->
+      <div id="groupLeaderboardWrapper" class="hidden bg-white rounded-2xl p-4 border border-theme-200 text-left space-y-2.5">
+        <h4 class="font-bold text-slate-800 text-xs sm:text-sm flex items-center gap-2">
+          <i class="fas fa-trophy text-amber-500"></i> Klasemen Skor Kelompok
+        </h4>
+        <div class="overflow-x-auto">
+          <table class="w-full text-xs text-left">
+            <thead class="bg-theme-50 text-theme-800 uppercase font-semibold">
+              <tr>
+                <th class="p-2 rounded-l-lg">Peringkat</th>
+                <th class="p-2">Nama Kelompok</th>
+                <th class="p-2">Benar</th>
+                <th class="p-2 rounded-r-lg">Skor</th>
+              </tr>
+            </thead>
+            <tbody id="groupLeaderboardBody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex flex-col sm:flex-row gap-2.5 justify-center pt-2">
+        <button onclick="toggleReviewModal(true)" class="py-3 px-5 bg-white border-2 border-theme-500 text-theme-600 font-bold rounded-xl hover:bg-theme-50 transition-all text-xs sm:text-sm font-fredoka flex items-center justify-center gap-2">
+          <i class="fas fa-search"></i> Review & Pembahasan
+        </button>
+
+        <button id="nextTeamOrRestartBtn" onclick="restartOrNextTeam()" class="py-3 px-6 btn-blue text-white font-bold rounded-xl shadow-md text-xs sm:text-sm font-fredoka flex items-center justify-center gap-2">
+          <i class="fas fa-redo"></i> Main Lagi
+        </button>
+
+        <button onclick="showScreen('home')" class="py-3 px-5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-xl transition-all text-xs sm:text-sm font-fredoka flex items-center justify-center gap-2">
+          <i class="fas fa-home"></i> Menu Utama
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- ==================== REVIEW MODAL ==================== -->
+  <div id="reviewModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
+      
+      <!-- Modal Header -->
+      <div class="p-4 bg-theme-50 border-b border-theme-200 flex justify-between items-center">
+        <h3 class="font-extrabold text-theme-900 font-fredoka text-base sm:text-lg flex items-center gap-2">
+          <i class="fas fa-clipboard-check text-theme-600"></i> Review Jawaban & Pembahasan
+        </h3>
+        <button onclick="toggleReviewModal(false)" class="text-slate-400 hover:text-slate-600 p-1 text-lg">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div id="reviewList" class="p-4 sm:p-5 overflow-y-auto space-y-3 flex-1 text-xs sm:text-sm">
+        <!-- Dynamically generated question reviews -->
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="p-3 bg-theme-50 border-t border-theme-200 text-right">
+        <button onclick="toggleReviewModal(false)" class="px-5 py-2 bg-theme-600 text-white font-bold rounded-xl text-xs sm:text-sm font-fredoka hover:bg-theme-700 transition-colors">
+          Tutup Pembahasan
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- JAVASCRIPT GAME LOGIC -->
+  <script>
+    // Global States
+    let soundEnabled = true;
+    let selectedMode = 'individu'; // 'individu' or 'kelompok'
+    let currentQuestionIndex = 0;
+    let questions = [];
+    let userAnswers = []; // stores { question, options, correctIndex, selectedIndex, isCorrect, timeTaken, explanation }
+    let score = 0;
+    
+    // Per-question Timer Configuration
+    const PER_QUESTION_TIME = 120; // 2 minutes per question
+    let secondsLeft = PER_QUESTION_TIME;
+    let timerInterval = null;
+    let questionStartTime = 0;
+
+    // Team Mode State
+    let teams = []; // [{ name: "Tim A", score: 0, correct: 0, wrong: 0 }]
+    let currentTeamIndex = 0;
+
+    // --- Web Audio API Synthetic Sound FX ---
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    function playSound(type) {
+      if (!soundEnabled) return;
+      try {
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        if (type === 'correct') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+          osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.2); // A5
+          gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.3);
+        } else if (type === 'wrong') {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(220, audioCtx.currentTime); // A3
+          osc.frequency.exponentialRampToValueAtTime(110, audioCtx.currentTime + 0.25); // A2
+          gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.3);
+        } else if (type === 'click') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(450, audioCtx.currentTime);
+          gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.08);
+        } else if (type === 'timeup') {
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+          osc.frequency.setValueAtTime(150, audioCtx.currentTime + 0.2);
+          gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.4);
+        } else if (type === 'win') {
+          const notes = [523.25, 659.25, 783.99, 1046.50];
+          notes.forEach((freq, idx) => {
+            const o = audioCtx.createOscillator();
+            const g = audioCtx.createGain();
+            o.connect(g);
+            g.connect(audioCtx.destination);
+            o.frequency.value = freq;
+            g.gain.setValueAtTime(0.12, audioCtx.currentTime + idx * 0.1);
+            g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + idx * 0.1 + 0.3);
+            o.start(audioCtx.currentTime + idx * 0.1);
+            o.stop(audioCtx.currentTime + idx * 0.1 + 0.3);
+          });
+        }
+      } catch (e) {
+        console.log("Audio API Error:", e);
+      }
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      const icon = document.getElementById('soundIcon');
+      if (soundEnabled) {
+        icon.className = 'fas fa-volume-up text-lg text-theme-600';
+      } else {
+        icon.className = 'fas fa-volume-mute text-lg text-slate-400';
+      }
+    }
+
+    // --- Screen Navigation ---
+    function showScreen(screenName) {
+      document.getElementById('screenHome').classList.add('hidden');
+      document.getElementById('screenGame').classList.add('hidden');
+      document.getElementById('screenResult').classList.add('hidden');
+
+      if (screenName === 'home') document.getElementById('screenHome').classList.remove('hidden');
+      if (screenName === 'game') document.getElementById('screenGame').classList.remove('hidden');
+      if (screenName === 'result') document.getElementById('screenResult').classList.remove('hidden');
+    }
+
+    // --- Mode & Setup Handlers ---
+    function selectMode(mode) {
+      playSound('click');
+      selectedMode = mode;
+
+      const indCard = document.getElementById('modeIndividuCard');
+      const kelCard = document.getElementById('modeKelompokCard');
+      const setupForm = document.getElementById('setupForm');
+      const inputIndividuWrapper = document.getElementById('inputIndividuWrapper');
+      const inputKelompokWrapper = document.getElementById('inputKelompokWrapper');
+
+      setupForm.classList.remove('hidden');
+
+      if (mode === 'individu') {
+        indCard.classList.add('border-theme-500', 'bg-theme-50/50');
+        kelCard.classList.remove('border-theme-500', 'bg-theme-50/50');
+        inputIndividuWrapper.classList.remove('hidden');
+        inputKelompokWrapper.classList.add('hidden');
+      } else {
+        kelCard.classList.add('border-theme-500', 'bg-theme-50/50');
+        indCard.classList.remove('border-theme-500', 'bg-theme-50/50');
+        inputKelompokWrapper.classList.remove('hidden');
+        inputIndividuWrapper.classList.add('hidden');
+        updateTeamInputs();
+      }
+    }
+
+    function updateTeamInputs() {
+      const count = parseInt(document.getElementById('teamCountSelect').value);
+      const container = document.getElementById('teamNamesContainer');
+      container.innerHTML = '';
+
+      for (let i = 1; i <= count; i++) {
+        const div = document.createElement('div');
+        div.innerHTML = `
+          <label class="block text-[11px] font-semibold text-slate-500">Nama Kelompok ${i}:</label>
+          <input type="text" id="teamInput_${i}" value="Kelompok ${String.fromCharCode(64 + i)}" class="w-full px-3 py-1.5 rounded-lg border border-theme-200 focus:outline-none focus:ring-1 focus:ring-theme-500 text-xs bg-white">
+        `;
+        container.appendChild(div);
+      }
+    }
+
+    // --- Math Questions Generator (15 Questions) ---
+    function generateMathQuestions(count = 15) {
+      const list = [];
+      const operators = ['+', '-', '*', '/'];
+
+      for (let i = 0; i < count; i++) {
+        let op = operators[Math.floor(Math.random() * operators.length)];
+        let num1, num2, correctAnswer, text, explanation;
+
+        if (op === '+') {
+          num1 = Math.floor(Math.random() * 90) + 10;
+          num2 = Math.floor(Math.random() * 90) + 10;
+          correctAnswer = num1 + num2;
+          text = `${num1} + ${num2}`;
+          explanation = `Penjumlahan sederhana: ${num1} ditambah ${num2} menghasilkan ${correctAnswer}.`;
+        } else if (op === '-') {
+          num1 = Math.floor(Math.random() * 95) + 10;
+          num2 = Math.floor(Math.random() * num1) + 1;
+          correctAnswer = num1 - num2;
+          text = `${num1} - ${num2}`;
+          explanation = `Pengurangan: ${num1} dikurangi ${num2} sisa ${correctAnswer}.`;
+        } else if (op === '*') {
+          num1 = Math.floor(Math.random() * 12) + 2;
+          num2 = Math.floor(Math.random() * 12) + 2;
+          correctAnswer = num1 * num2;
+          text = `${num1} × ${num2}`;
+          explanation = `Perkalian: ${num1} dikali ${num2} sama dengan ${correctAnswer}.`;
+        } else if (op === '/') {
+          num2 = Math.floor(Math.random() * 10) + 2;
+          correctAnswer = Math.floor(Math.random() * 12) + 1;
+          num1 = num2 * correctAnswer;
+          text = `${num1} ÷ ${num2}`;
+          explanation = `Pembagian: ${num1} dibagi ${num2} adalah ${correctAnswer}.`;
+        }
+
+        // Generate options
+        const optionsSet = new Set([correctAnswer]);
+        while (optionsSet.size < 4) {
+          let offset = (Math.floor(Math.random() * 8) + 1) * (Math.random() < 0.5 ? 1 : -1);
+          let wrong = correctAnswer + offset;
+          if (wrong >= 0) {
+            optionsSet.add(wrong);
+          }
+        }
+
+        const options = Array.from(optionsSet).sort(() => Math.random() - 0.5);
+        const answerIndex = options.indexOf(correctAnswer);
+
+        list.push({
+          text: text,
+          options: options,
+          answerIndex: answerIndex,
+          explanation: explanation
+        });
+      }
+
+      return list;
+    }
+
+    // --- Start Game Logic ---
+    function startGame() {
+      playSound('click');
+
+      if (selectedMode === 'kelompok') {
+        const count = parseInt(document.getElementById('teamCountSelect').value);
+        teams = [];
+        for (let i = 1; i <= count; i++) {
+          const inputVal = document.getElementById(`teamInput_${i}`).value.trim();
+          teams.push({
+            name: inputVal || `Kelompok ${String.fromCharCode(64 + i)}`,
+            score: 0,
+            correct: 0,
+            wrong: 0
+          });
+        }
+        currentTeamIndex = 0;
+      }
+
+      initRound();
+    }
+
+    function initRound() {
+      currentQuestionIndex = 0;
+      score = 0;
+      userAnswers = [];
+      questions = generateMathQuestions(15);
+
+      // Update Team Badge Header
+      const teamTurnBadge = document.getElementById('teamTurnBadge');
+      if (selectedMode === 'kelompok') {
+        teamTurnBadge.classList.remove('hidden');
+        document.getElementById('currentTeamName').innerText = teams[currentTeamIndex].name;
+      } else {
+        teamTurnBadge.classList.add('hidden');
+      }
+
+      document.getElementById('scoreText').innerText = '0';
+      showScreen('game');
+      renderQuestion();
+    }
+
+    // --- Mascot SVG Renderer (State based) ---
+    function renderMascot(state, bubbleText) {
+      const container = document.getElementById('gameMascotContainer');
+      const bubble = document.getElementById('mascotBubble');
+      bubble.innerText = bubbleText;
+
+      let eyeSvg = `<circle cx="75" cy="90" r="8" fill="#0C4A6E"/><circle cx="125" cy="90" r="8" fill="#0C4A6E"/>`;
+      let mouthSvg = `<polygon points="100,98 90,110 110,110" fill="#F59E0B"/>`;
+
+      if (state === 'happy') {
+        eyeSvg = `<path d="M 68,90 Q 75,80 82,90" stroke="#0C4A6E" stroke-width="4" fill="none"/>
+                  <path d="M 118,90 Q 125,80 132,90" stroke="#0C4A6E" stroke-width="4" fill="none"/>`;
+        mouthSvg = `<ellipse cx="100" cy="106" rx="10" ry="8" fill="#F59E0B"/>`;
+      } else if (state === 'thinking') {
+        eyeSvg = `<circle cx="78" cy="86" r="7" fill="#0C4A6E"/><circle cx="128" cy="86" r="7" fill="#0C4A6E"/>`;
+      } else if (state === 'sad') {
+        eyeSvg = `<path d="M 68,85 Q 75,95 82,85" stroke="#0C4A6E" stroke-width="4" fill="none"/>
+                  <path d="M 118,85 Q 125,95 132,85" stroke="#0C4A6E" stroke-width="4" fill="none"/>`;
+      }
+
+      container.innerHTML = `
+        <svg viewBox="0 0 200 200" class="w-full h-full drop-shadow-md">
+          <circle cx="100" cy="105" r="70" fill="#0EA5E9"/>
+          <circle cx="100" cy="115" r="50" fill="#E0EFFE"/>
+          <polygon points="100,20 160,40 100,60 40,40" fill="#0C4A6E"/>
+          <circle cx="75" cy="90" r="18" fill="none" stroke="#0C4A6E" stroke-width="3.5"/>
+          <circle cx="125" cy="90" r="18" fill="none" stroke="#0C4A6E" stroke-width="3.5"/>
+          <line x1="93" y1="90" x2="107" y2="90" stroke="#0C4A6E" stroke-width="3.5"/>
+          ${eyeSvg}
+          ${mouthSvg}
+        </svg>
+      `;
+    }
+
+    // --- Render Question & Start Per-Question 2 Minute Timer ---
+    function renderQuestion() {
+      if (currentQuestionIndex >= questions.length) {
+        endGame();
+        return;
+      }
+
+      const q = questions[currentQuestionIndex];
+      document.getElementById('currentQuestionNum').innerText = currentQuestionIndex + 1;
+      document.getElementById('questionMath').innerText = `${q.text} = ?`;
+
+      // Set Mascot state to thinking
+      const mascotMessages = [
+        "Yuk fokus, 2 menit per soal!",
+        "Pikirkan dengan teliti ya!",
+        "Kamu pasti bisa menjawab ini!",
+        "Hitung baik-baik ya!"
+      ];
+      renderMascot('thinking', mascotMessages[Math.floor(Math.random() * mascotMessages.length)]);
+
+      const optionsGrid = document.getElementById('optionsGrid');
+      optionsGrid.innerHTML = '';
+      const labels = ['A', 'B', 'C', 'D'];
+
+      q.options.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.onclick = () => handleAnswer(idx);
+        btn.className = `option-btn w-full p-3.5 sm:p-4 rounded-xl border-2 border-theme-200 bg-white font-bold text-slate-800 flex items-center justify-between text-base sm:text-lg shadow-sm font-fredoka`;
+        btn.innerHTML = `
+          <span class="w-7 h-7 rounded-lg bg-theme-100 text-theme-700 flex items-center justify-center font-bold text-xs sm:text-sm">${labels[idx]}</span>
+          <span>${opt}</span>
+          <span class="w-7"></span>
+        `;
+        optionsGrid.appendChild(btn);
+      });
+
+      // Start / Reset Timer 2 Minutes for THIS question
+      startPerQuestionTimer();
+    }
+
+    // --- Per-Question Timer Logic (Resets to 120s each question) ---
+    function startPerQuestionTimer() {
+      clearInterval(timerInterval);
+      secondsLeft = PER_QUESTION_TIME; // Reset to 120s
+      questionStartTime = Date.now();
+      updateTimerUI();
+
+      timerInterval = setInterval(() => {
+        secondsLeft--;
+        updateTimerUI();
+
+        if (secondsLeft <= 0) {
+          clearInterval(timerInterval);
+          playSound('timeup');
+          // Handle time out as un-answered wrong
+          handleAnswer(-1, true);
+        }
+      }, 1000);
+    }
+
+    function updateTimerUI() {
+      const mins = Math.floor(secondsLeft / 60);
+      const secs = secondsLeft % 60;
+      document.getElementById('timerText').innerText = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+
+      const percent = (secondsLeft / PER_QUESTION_TIME) * 100;
+      const bar = document.getElementById('timerBar');
+      bar.style.width = `${percent}%`;
+
+      if (secondsLeft <= 20) {
+        bar.className = 'bg-red-500 h-full transition-all duration-1000 ease-linear';
+      } else if (secondsLeft <= 40) {
+        bar.className = 'bg-amber-500 h-full transition-all duration-1000 ease-linear';
+      } else {
+        bar.className = 'bg-theme-500 h-full transition-all duration-1000 ease-linear';
+      }
+    }
+
+    // --- Handle User Answer ---
+    function handleAnswer(selectedIndex, isTimeUp = false) {
+      clearInterval(timerInterval);
+      const timeTaken = Math.round((Date.now() - questionStartTime) / 1000);
+
+      const q = questions[currentQuestionIndex];
+      const isCorrect = selectedIndex === q.answerIndex;
+
+      // Disable buttons
+      const btns = document.querySelectorAll('.option-btn');
+      btns.forEach(b => b.disabled = true);
+
+      if (!isTimeUp && selectedIndex >= 0) {
+        btns[selectedIndex].classList.remove('border-theme-200', 'bg-white');
+        if (isCorrect) {
+          btns[selectedIndex].classList.add('border-emerald-500', 'bg-emerald-50', 'text-emerald-800');
+          playSound('correct');
+          score += 10;
+          document.getElementById('scoreText').innerText = score;
+          renderMascot('happy', "Hore! Jawabanmu Tepat Sekali! 🎉");
+        } else {
+          btns[selectedIndex].classList.add('border-red-500', 'bg-red-50', 'text-red-800');
+          btns[q.answerIndex].classList.remove('border-theme-200');
+          btns[q.answerIndex].classList.add('border-emerald-500', 'bg-emerald-50', 'text-emerald-800');
+          playSound('wrong');
+          renderMascot('sad', "Waduh, belum tepat. Tetap semangat!");
+        }
+      } else {
+        // Time Up
+        btns[q.answerIndex].classList.remove('border-theme-200');
+        btns[q.answerIndex].classList.add('border-emerald-500', 'bg-emerald-50', 'text-emerald-800');
+        renderMascot('sad', "Waktu 2 menit habis! Lanjut ke soal berikutnya.");
+      }
+
+      // Record result
+      userAnswers.push({
+        question: q.text,
+        options: q.options,
+        correctIndex: q.answerIndex,
+        selectedIndex: selectedIndex,
+        isCorrect: isCorrect,
+        timeTaken: timeTaken,
+        explanation: q.explanation
+      });
+
+      // Advance after delay
+      setTimeout(() => {
+        currentQuestionIndex++;
+        renderQuestion();
+      }, 1200);
+    }
+
+    // --- End Game & Results ---
+    function endGame() {
+      clearInterval(timerInterval);
+
+      const correctCount = userAnswers.filter(a => a.isCorrect).length;
+      const wrongCount = userAnswers.length - correctCount;
+      const accuracy = Math.round((correctCount / questions.length) * 100);
+      const totalTimeTaken = userAnswers.reduce((acc, curr) => acc + curr.timeTaken, 0);
+      const avgTime = Math.round(totalTimeTaken / questions.length);
+
+      // Save team score
+      if (selectedMode === 'kelompok') {
+        teams[currentTeamIndex].score = score;
+        teams[currentTeamIndex].correct = correctCount;
+        teams[currentTeamIndex].wrong = wrongCount;
+      }
+
+      // Fill UI
+      document.getElementById('resTotalScore').innerText = score;
+      document.getElementById('resCorrect').innerText = correctCount;
+      document.getElementById('resWrong').innerText = wrongCount;
+      document.getElementById('resAccuracy').innerText = `${accuracy}%`;
+      document.getElementById('resAvgTime').innerText = `${avgTime} dtk/soal`;
+
+      const title = document.getElementById('resultTitle');
+      const sub = document.getElementById('resultSubtitle');
+      const nextBtn = document.getElementById('nextTeamOrRestartBtn');
+      const groupWrapper = document.getElementById('groupLeaderboardWrapper');
+
+      if (selectedMode === 'kelompok') {
+        const currentTeam = teams[currentTeamIndex];
+        title.innerText = `Selesai: ${currentTeam.name}!`;
+
+        if (currentTeamIndex < teams.length - 1) {
+          sub.innerText = `Skor tersimpan. Giliran ${teams[currentTeamIndex + 1].name} selanjutnya!`;
+          nextBtn.innerHTML = `<i class="fas fa-users"></i> Lanjut Ke ${teams[currentTeamIndex + 1].name}`;
+        } else {
+          sub.innerText = `Semua kelompok selesai! Berikut hasil akhirnya:`;
+          nextBtn.innerHTML = `<i class="fas fa-redo"></i> Main Ulang dari Awal`;
+        }
+
+        groupWrapper.classList.remove('hidden');
+        renderGroupLeaderboard();
+
+      } else {
+        groupWrapper.classList.add('hidden');
+        const pName = document.getElementById('playerName').value.trim() || 'Pemain';
+
+        if (accuracy >= 80) {
+          title.innerText = `Hebat Banget, ${pName}! 🏆`;
+          sub.innerText = `Kamu jenius matematika! Hasil yang sangat memuaskan.`;
+        } else if (accuracy >= 50) {
+          title.innerText = `Bagus Sekali, ${pName}! 👍`;
+          sub.innerText = `Kemampuan matematikamu sudah cukup baik, tingkatkan lagi ya!`;
+        } else {
+          title.innerText = `Semangat Terus, ${pName}! 💪`;
+          sub.innerText = `Coba latihan lagi untuk mendapat skor yang lebih tinggi!`;
+        }
+
+        nextBtn.innerHTML = `<i class="fas fa-redo"></i> Main Lagi`;
+      }
+
+      showScreen('result');
+
+      if (accuracy >= 60) {
+        playSound('win');
+        triggerConfetti();
+      }
+    }
+
+    function renderGroupLeaderboard() {
+      const tbody = document.getElementById('groupLeaderboardBody');
+      tbody.innerHTML = '';
+
+      const sorted = [...teams].sort((a, b) => b.score - a.score);
+
+      sorted.forEach((team, idx) => {
+        const tr = document.createElement('tr');
+        tr.className = idx === 0 ? 'bg-amber-50 font-bold border-b border-theme-100' : 'border-b border-theme-100';
+
+        let medal = `#${idx + 1}`;
+        if (idx === 0) medal = '🥇 1st';
+        if (idx === 1) medal = '🥈 2nd';
+        if (idx === 2) medal = '🥉 3rd';
+
+        tr.innerHTML = `
+          <td class="p-2">${medal}</td>
+          <td class="p-2 font-bold text-slate-800">${team.name}</td>
+          <td class="p-2 text-emerald-600">${team.correct} / 15</td>
+          <td class="p-2 text-theme-600 font-extrabold">${team.score}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function restartOrNextTeam() {
+      if (selectedMode === 'kelompok') {
+        if (currentTeamIndex < teams.length - 1) {
+          currentTeamIndex++;
+          initRound();
+        } else {
+          currentTeamIndex = 0;
+          initRound();
+        }
+      } else {
+        initRound();
+      }
+    }
+
+    function confirmQuit() {
+      if (confirm('Apakah kamu yakin ingin keluar? Progres soal akan dihentikan.')) {
+        clearInterval(timerInterval);
+        showScreen('home');
+      }
+    }
+
+    // --- Review Modal Logic ---
+    function toggleReviewModal(show) {
+      playSound('click');
+      const modal = document.getElementById('reviewModal');
+      if (show) {
+        populateReviewList();
+        modal.classList.remove('hidden');
+      } else {
+        modal.classList.add('hidden');
+      }
+    }
+
+    function populateReviewList() {
+      const container = document.getElementById('reviewList');
+      container.innerHTML = '';
+
+      userAnswers.forEach((ans, idx) => {
+        const div = document.createElement('div');
+        const isUserCorrect = ans.isCorrect;
+
+        div.className = `p-3.5 rounded-2xl border ${isUserCorrect ? 'border-emerald-200 bg-emerald-50/60' : 'border-red-200 bg-red-50/60'} space-y-1.5`;
+
+        const userChoiceText = ans.selectedIndex >= 0 ? ans.options[ans.selectedIndex] : 'Waktu habis (Tidak dijawab)';
+        const correctChoiceText = ans.options[ans.correctIndex];
+
+        div.innerHTML = `
+          <div class="flex justify-between items-center">
+            <span class="font-bold text-slate-800 font-fredoka">Soal #${idx + 1}: ${ans.question}</span>
+            <span class="text-[10px] sm:text-xs px-2 py-0.5 rounded-full font-bold ${isUserCorrect ? 'bg-emerald-200 text-emerald-800' : 'bg-red-200 text-red-800'}">
+              ${isUserCorrect ? 'Benar (+10)' : 'Salah'}
+            </span>
+          </div>
+          <div class="text-xs space-y-1">
+            <p class="text-slate-600">Jawaban Kamu: <span class="font-bold ${isUserCorrect ? 'text-emerald-700' : 'text-red-700'}">${userChoiceText}</span> (${ans.timeTaken} detik)</p>
+            ${!isUserCorrect ? `<p class="text-slate-600">Jawaban Benar: <span class="font-bold text-emerald-700">${correctChoiceText}</span></p>` : ''}
+            <p class="text-[11px] text-slate-500 italic bg-white/70 p-2 rounded-lg mt-1 border border-slate-100">💡 <b>Pembahasan:</b> ${ans.explanation}</p>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    // --- Confetti FX ---
+    function triggerConfetti() {
+      if (typeof confetti === 'function') {
+        confetti({
+          particleCount: 90,
+          spread: 80,
+          origin: { y: 0.6 }
+        });
+      }
+    }
+
+    // On Load Initializer
+    window.onload = function() {
+      selectMode('individu');
+    };
+  </script>
+
+</body>
+</html>
